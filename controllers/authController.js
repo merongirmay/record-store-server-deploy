@@ -12,7 +12,13 @@ const signToken = (id) =>
   });
 
 const removeCookies = (res, ...cookies) => {
-  cookies.forEach((name) => res.clearCookie(name));
+  cookies.forEach((name) =>
+    res.clearCookie(name, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    })
+  );
 };
 
 const createSendToken = (res, status, user) => {
@@ -22,8 +28,9 @@ const createSendToken = (res, status, user) => {
     expires: new Date(
       Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
     ),
-    secure: true, // Will still work over http if it is a localhost
     httpOnly: true,
+    sameSite: "none",
+    secure: true, // Will still work over http if it is a localhost
   };
 
   res.cookie("jwtToken", jwtToken, cookieOptions);
